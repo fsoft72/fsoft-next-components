@@ -1,4 +1,5 @@
-import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree';
+// import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree';
+import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree2';
 
 const tree: DNDTreeItem[] = [
 	{
@@ -41,9 +42,13 @@ const DNDTreeExamplePage = () => {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100vh', position: 'relative' }}>
 			<h1 style={{ fontSize: '250%' }}>DNDTree Example</h1>
+			{/*
 			<DNDTree
 				tree={tree}
 			/>
+	*/}
+
+			<DNDTree tree={tree} />
 		</div>
 	);
 };
