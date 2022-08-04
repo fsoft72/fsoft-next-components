@@ -6,7 +6,7 @@ const mkid = () => Math.random().toString( 36 ).slice( 2, 9 );
 function Droppable ( props: any ) {
 	const { isOver, setNodeRef } = useDroppable( { id: props.id, } );
 
-	const style = { color: isOver ? 'green' : undefined, };
+	const style = { border: isOver ? '4px dashed #00ff00' : '4px solid transparent' };
 
 	return (
 		<div ref={setNodeRef} style={style}>
@@ -43,6 +43,34 @@ export type DNDTreeItem = {
 	isDraggable?: boolean;
 };
 
+export type DNDNodeProps = {
+	isFolder?: boolean;
+
+	label: string;
+	id: string;
+	level: number;
+
+	isDroppable: boolean;
+	isDraggable: boolean;
+};
+
+export const DNDNode = ( props: DNDNodeProps ) => {
+	const style = {
+		backgroundColor: props.isFolder ? '#aaf' : '#faa',
+		padding: '0.5em',
+		border: '1px solid #ccc',
+		minWidth: '10em',
+		minHeight: '2em',
+	};
+
+	return (
+		<div style={style}>
+			{props.label}
+		</div>
+	);
+};
+
+
 const deepCopy = ( obj: any ) => {
 	return JSON.parse( JSON.stringify( obj ) );
 };
@@ -51,9 +79,11 @@ const deepCopy = ( obj: any ) => {
 interface DNDTreeProps {
 	tree: DNDTreeItem[];
 	maxDepth?: number;
+
+	nodeRenderer?: ( props: DNDNodeProps ) => JSX.Element;
 }
 
-const DNDTree = ( { tree, maxDepth = 0 }: DNDTreeProps ) => {
+const DNDTree = ( { tree, maxDepth = 0, nodeRenderer = DNDNode }: DNDTreeProps ) => {
 	const [ parent, setParent ] = useState( null );
 	const [ elements, setElements ] = useState<DNDTreeItem[]>();
 	const [ elementsRef, setElementsRef ] = useState<Record<string, DNDTreeItem>>();
@@ -167,13 +197,28 @@ const DNDTree = ( { tree, maxDepth = 0 }: DNDTreeProps ) => {
 	const _dump_elem = ( item: DNDTreeItem ) => {
 		if ( item.isFolder ) {
 			return <Droppable key={item.id} id={item.id}>
-				FOLDER {item.label}
+				{nodeRenderer( {
+					isFolder: true,
+					label: item.label,
+					id: item.id,
+					level: item.level!,
+					isDroppable: item.isDroppable!,
+					isDraggable: item.isDraggable!,
+				} )}
 				{item.children && item.children.map( _dump_elem )}
 			</Droppable>;
 		}
 
 		return <Draggable key={item.id} id={item.id}>
-			ITEM {item.label}
+			{
+				nodeRenderer( {
+					isFolder: false,
+					label: item.label,
+					id: item.id,
+					level: item.level!,
+					isDroppable: item.isDroppable!,
+					isDraggable: item.isDraggable!,
+				} )}
 		</Draggable>;
 	};
 
