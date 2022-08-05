@@ -1,47 +1,47 @@
 {
-  "name": "@os3/fsoft-components",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "dist": "tsc -p fsoft-components/tsconfig.json"
-  },
-  "dependencies": {
-    "@dnd-kit/core": "^6.0.5",
-    "@dnd-kit/sortable": "^7.0.1",
-    "classnames": "^2.3.1",
-    "clsx": "^1.2.1",
-    "next": "12.1.6",
-    "react": "18.1.0",
-    "react-dom": "18.1.0"
-  },
-  "devDependencies": {
-    "@types/node": "17.0.31",
-    "@types/react": "18.0.8",
-    "@types/react-dom": "18.0.3",
-    "eslint": "8.14.0",
-    "eslint-config-next": "12.1.6",
-    "typescript": "4.6.4"
-  },
-  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
-  "main": "dist/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fsoft72/fsoft-next-components.git"
-  },
-  "keywords": [
-    "components",
-    "react",
-    "nextjs"
-  ],
-  "author": "Fabio Rotondo",
-  "license": "MIT",
-  "types": "./dist/index.d.ts",
-  "bugs": {
-    "url": "https://github.com/fsoft72/fsoft-next-components/issues"
-  },
-  "homepage": "https://github.com/fsoft72/fsoft-next-components#readme"
+	"name": "@os3/fsoft-components",
+	"version": "0.1.0",
+	"private": false,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"dist": "tsc -p fsoft-components/tsconfig.json"
+	},
+	"dependencies": {
+		"@dnd-kit/core": "^6.0.5",
+		"@dnd-kit/sortable": "^7.0.1",
+		"classnames": "^2.3.1",
+		"clsx": "^1.2.1",
+		"next": "12.1.6",
+		"react": "18.1.0",
+		"react-dom": "18.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "17.0.31",
+		"@types/react": "18.0.8",
+		"@types/react-dom": "18.0.3",
+		"eslint": "8.14.0",
+		"eslint-config-next": "12.1.6",
+		"typescript": "4.6.4"
+	},
+	"description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+	"main": "dist/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fsoft72/fsoft-next-components.git"
+	},
+	"keywords": [
+		"components",
+		"react",
+		"nextjs"
+	],
+	"author": "Fabio Rotondo",
+	"license": "MIT",
+	"types": "./dist/index.d.ts",
+	"bugs": {
+		"url": "https://github.com/fsoft72/fsoft-next-components/issues"
+	},
+	"homepage": "https://github.com/fsoft72/fsoft-next-components#readme"
 }
