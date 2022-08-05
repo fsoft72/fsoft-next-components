@@ -1,5 +1,5 @@
 // import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree';
-import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree2';
+import DNDTree, { DNDTreeItem } from '../fsoft-components/DNDTree';
 
 const tree: DNDTreeItem[] = [
 	{
