@@ -54,18 +54,23 @@ import { SortableTreeItem } from './SortableTreeItem';
 //   },
 // };
 
+const deepClone = ( obj: any ) => JSON.parse( JSON.stringify( obj ) );
+
 const dropAnimation = {
 	...defaultDropAnimation,
 };
 
 export type SortableTreeProps<TData, TElement extends HTMLElement> = {
 	items: TreeItems<TData>;
-	onItemsChanged ( items: TreeItems<TData> ): void;
 	TreeItemComponent: TreeItemComponentType<TData, TElement>;
 	indentationWidth?: number;
 	indicator?: boolean;
 	pointerSensorOptions?: PointerSensorOptions;
 	disableSorting?: boolean;
+
+	maxDepth?: number;
+	onItemsChanged ( items: TreeItems<TData> ): void;
+	onBeforeDrop?( active: TData, over: TData, newDepth: number ): boolean;
 };
 const defaultPointerSensorOptions: PointerSensorOptions = {
 	activationConstraint: {
@@ -78,11 +83,14 @@ export function SortableTree<
 > ( {
 	items,
 	indicator,
-	indentationWidth = 20,
-	onItemsChanged,
-	TreeItemComponent,
+	indentationWidth = 50,
 	pointerSensorOptions,
 	disableSorting,
+	maxDepth,
+	TreeItemComponent,
+
+	onItemsChanged,
+	onBeforeDrop,
 	...rest
 }: SortableTreeProps<TreeItemData, TElement> ) {
 	const [ activeId, setActiveId ] = useState<UniqueIdentifier | null>( null );
@@ -92,6 +100,7 @@ export function SortableTree<
 		parentId: UniqueIdentifier | null;
 		overId: UniqueIdentifier;
 	} | null>( null );
+	const [ itemsById, setItemsById ] = useState<Record<UniqueIdentifier, TreeItemData>>( {} );
 
 	const flattenedItems = useMemo( () => {
 		const flattenedTree = flattenTree( items );
@@ -107,6 +116,24 @@ export function SortableTree<
 		);
 		return result;
 	}, [ activeId, items ] );
+
+	// this effect is fired when items change
+	// to create a new itemsById map
+	useEffect( () => {
+		const _itemsById: Record<UniqueIdentifier, TreeItemData> = {};
+
+		const _recursive = ( subItems: TreeItems<TreeItemData> ) => {
+			subItems.forEach( ( item ) => {
+				_itemsById[ item.id ] = deepClone( item );
+				item.children && _recursive( item.children );
+			}
+			);
+		};
+		_recursive( items );
+
+		setItemsById( _itemsById );
+	}, [ items ] );
+
 	const projected = getProjection(
 		flattenedItems,
 		activeId,
@@ -118,6 +145,7 @@ export function SortableTree<
 		items: flattenedItems,
 		offset: offsetLeft,
 	} );
+
 	// const [coordinateGetter] = useState(() =>
 	//   sortableTreeKeyboardCoordinates(sensorContext, indentationWidth)
 	// );
@@ -131,10 +159,8 @@ export function SortableTree<
 		// })
 	);
 
-	const sortedIds = useMemo(
-		() => flattenedItems.map( ( { id } ) => id ),
-		[ flattenedItems ]
-	);
+	const sortedIds = useMemo( () => flattenedItems.map( ( { id } ) => id ), [ flattenedItems ] );
+
 	const activeItem = activeId
 		? flattenedItems.find( ( { id } ) => id === activeId )
 		: null;
@@ -148,23 +174,18 @@ export function SortableTree<
 
 	const itemsRef = useRef( items );
 	itemsRef.current = items;
-	const handleRemove = useCallback(
-		( id: string ) => {
-			onItemsChanged( removeItem( itemsRef.current, id ) );
-		},
-		[ onItemsChanged ]
-	);
 
-	const handleCollapse = useCallback(
-		function handleCollapse ( id: string ) {
-			onItemsChanged(
-				setProperty( itemsRef.current, id, 'collapsed', ( ( value: boolean ) => {
-					return !value;
-				} ) as any )
-			);
-		},
-		[ onItemsChanged ]
-	);
+	const handleRemove = useCallback( ( id: string ) => {
+		onItemsChanged( removeItem( itemsRef.current, id ) );
+	}, [ onItemsChanged ] );
+
+	const handleCollapse = useCallback( ( id: string ) => {
+		onItemsChanged(
+			setProperty( itemsRef.current, id, 'collapsed', ( ( value: boolean ) => {
+				return !value;
+			} ) as any )
+		);
+	}, [ onItemsChanged ] );
 
 	/*
 	const announcements: Announcements = useMemo( () => ( {
@@ -278,7 +299,15 @@ export function SortableTree<
 	function handleDragEnd ( { active, over }: DragEndEvent ) {
 		resetState();
 
+		if ( active.id === over?.id ) return;
+
+		if ( maxDepth && projected && projected?.depth > ( maxDepth - 1 ) ) return;
+
+		if ( onBeforeDrop && onBeforeDrop( itemsById[ active.id ], itemsById[ over?.id! ], projected?.depth || 0 ) === false ) return;
+
 		if ( projected && over ) {
+			console.log( "==== DROPPPED", { active, over }, projected.depth );
+
 			const { depth, parentId } = projected;
 			const clonedItems: FlattenedItem<TreeItemData>[] = flattenTree( items );
 			const overIndex = clonedItems.findIndex( ( { id } ) => id === over.id );
