@@ -1,0 +1,14 @@
+.eslintrc.json
+.gitignore
+.npmignore
+yarn.lock
+.next
+README.md
+fsoft-components
+pages
+public
+styles
+next-env.d.ts
+next.config.js
+tsconfig.tsbuildinfo
+
