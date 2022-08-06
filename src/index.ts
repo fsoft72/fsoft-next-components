@@ -7,7 +7,11 @@ import VideoBackground from './VideoBackground';
 
 export {
 	BGImage,
-	DNDTree, DNDTreeItem,
+	DNDTree,
 	NonSSR,
 	VideoBackground
+};
+
+export type {
+	DNDTreeItem
 };
